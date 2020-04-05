@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 using std::string;
+using std::vector;
 
 class Posting {
 public:
@@ -12,5 +14,5 @@ public:
   int doc_id;
   // TODO: Consider changing location to a better identifier like page and
   // paragraph
-  int location;
+  vector<int> location;
 };
