@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapBuilder.cpp" />
     <ClCompile Include="Posting.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +236,7 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MapBuilder.h" />
     <ClInclude Include="Posting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
