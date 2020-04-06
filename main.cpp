@@ -4,6 +4,7 @@
 
 #include "Posting.h"
 #include <algorithm>
+#include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
 #include <fstream>
 #include <iostream>
@@ -43,7 +44,7 @@ void PrintMap(ostream &os, StringVecMap &map) {
   for (auto it : map) {
     os << it.first << "\t";
     for (auto posting : it.second) {
-      os << "doc_id: " << posting.doc_id << "\t";
+      os << "id: " << posting.doc_id << "\t";
       for (auto location : posting.location) {
         os << location << " ";
       }
@@ -67,21 +68,40 @@ StringVecMap BuildMap(const vector<string> &files, vector<string> &v_stop) {
       getline(ifs, line, '\n');
       // Tokenize the line with boost tokenizer.
       boost::tokenizer<> tok(line);
+      // TODO: fix the tokenizer to not include numbers
       // Loop over tokens
       for (auto it = tok.begin(); it != tok.end(); it++) {
+        // convert token to lowercase
+        string lowercase = *it;
+        boost::algorithm::to_lower(lowercase);
         // if word is a stop word, continue with next token
-        if (count(v_stop.begin(), v_stop.end(), *it))
+        if (count(v_stop.begin(), v_stop.end(), lowercase))
           continue;
         // check whether term is already stored in map
-        StringVecMap::iterator term_it = tmp_map.find(*it);
+        StringVecMap::iterator term_it = tmp_map.find(lowercase);
         if (term_it == tmp_map.end()) {
           vector<Posting> v_post{Posting(doc_id, -1)};
           // word was *not* found, so add a map entry
-          tmp_map.emplace(*it, v_post);
+          tmp_map.emplace(lowercase, v_post);
         } else {
-          // Term was found. Check if there is already a
-          // posting for this doc_id.
-          tmp_map[*it].emplace_back(Posting(doc_id, -1));
+          // Term was found. Set a flag for if a
+          // posting for this doc_id already exists.
+          bool post_for_this_doc_id_exists = false;
+          int index_of_matching_post = -1;
+          for (int post_index = 0; post_index < (*term_it).second.size();
+               post_index++) {
+            if (term_it->second[post_index].doc_id == doc_id) {
+              post_for_this_doc_id_exists = true;
+              index_of_matching_post = post_index;
+            }
+          }
+          if (!post_for_this_doc_id_exists) {
+            tmp_map[lowercase].emplace_back(Posting(doc_id, -1));
+          } else {
+            assert(post_for_this_doc_id_exists == true);
+            // add a second location to the location vector
+            (tmp_map[lowercase])[index_of_matching_post].location.push_back(-1);
+          }
         }
       } // End of loop over tokens
       if (!ifs.good())
