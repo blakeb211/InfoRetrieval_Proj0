@@ -2,7 +2,6 @@
     Description:  This file has the 'main' function that runs the program.
     */
 
-#include "Posting.h"
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
@@ -12,6 +11,8 @@
 #include <map>
 #include <string>
 #include <vector>
+
+#include "Posting.h"
 using namespace std;
 // Type defs
 typedef map<string, vector<Posting>> StringVecMap;
@@ -24,10 +25,10 @@ const string kStopwordFilename("stop_words.txt");
 
 // Function declarations
 vector<string> LoadStopWords();
-StringVecMap BuildMap(const vector<string> &, vector<string> &);
-void PrintMap(ostream &, StringVecMap &);
-bool is_number(const string &s);
-
+StringVecMap BuildMap(const vector<string>&, vector<string>&);
+void PrintMap(ostream&, StringVecMap&);
+bool is_number(const string& s);
+bool is_Token_Valid(const vector<string>& stopwords, const string word_token);
 int main() {
   // Initialize a vector to hold the stop words
   vector<string> v_stop = LoadStopWords();
@@ -42,7 +43,7 @@ int main() {
 
 // Description: Print a map<string, vector<Posting>> to an ostream
 // Return Type: void
-void PrintMap(ostream &os, StringVecMap &map) {
+void PrintMap(ostream& os, StringVecMap& map) {
   for (auto map_iterator : map) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
@@ -63,10 +64,10 @@ void PrintMap(ostream &os, StringVecMap &map) {
 // Description: Iterate through the files. Tokenize the words.').
 // Remove stop words. Add doc_id and location to the dictionary.
 // Return Type: Map of strings to vector<Posting>
-StringVecMap BuildMap(const vector<string> &files, vector<string> &v_stop) {
+StringVecMap BuildMap(const vector<string>& files, vector<string>& v_stop) {
   cout << "Map is being built..." << endl;
-  ifstream ifs;         // declare reusable ifstream
-  StringVecMap tmp_map; // declare map to be returned
+  ifstream ifs;          // declare reusable ifstream
+  StringVecMap tmp_map;  // declare map to be returned
   // Loop over filenames
   for (int doc_id = 0; doc_id < kInputFilenames.size(); doc_id++) {
     ifs = ifstream(files[doc_id], ios::in);
@@ -82,21 +83,19 @@ StringVecMap BuildMap(const vector<string> &files, vector<string> &v_stop) {
         // convert token to lowercase
         string lowercase = *word_iterator;
         boost::algorithm::to_lower(lowercase);
-        // if word is a stop word, continue with next token
-        if (count(v_stop.begin(), v_stop.end(), lowercase))
-          continue;
-        // if word is a number, continue with next token
-        if (is_number(lowercase))
+        if (!is_Token_Valid(v_stop, lowercase))
           continue;
         // check whether term is already stored in map
         StringVecMap::iterator term_it = tmp_map.find(lowercase);
         if (term_it == tmp_map.end()) {
+          // Term was *not* found in map, so add a new map entry
           vector<Posting> v_post{Posting(doc_id, -1)};
-          // word was *not* found, so add a map entry
           tmp_map.emplace(lowercase, v_post);
         } else {
-          // Term was found. Set a flag for if a
-          // posting for this doc_id already exists.
+          // Term *was* found in map.
+          // Check if term was already found in this document.
+          // If it was already found, set flag to true and
+          // save the index in vector<posting> where it was already stored.
           bool post_for_this_doc_id_already_exists = false;
           int index_of_matching_post = -1;
           for (int post_index = 0; post_index < (*term_it).second.size();
@@ -114,12 +113,12 @@ StringVecMap BuildMap(const vector<string> &files, vector<string> &v_stop) {
             (tmp_map[lowercase])[index_of_matching_post].location.push_back(-1);
           }
         }
-      } // End of loop over tokens
+      }  // End of loop over tokens
       if (!ifs.good())
         break;
     }
     ifs.close();
-  } // end of loop over files
+  }  // end of loop over files
   return tmp_map;
 }
 
@@ -142,9 +141,19 @@ vector<string> LoadStopWords() {
   return v_words;
 }
 
-bool is_number(const string &s) {
+bool is_number(const string& s) {
   string::const_iterator it = s.begin();
   while (it != s.end() && isdigit(*it))
     ++it;
   return !s.empty() && it == s.end();
+}
+
+bool is_Token_Valid(const vector<string>& stopwords, const string word_token) {
+  // if word is a stop word, continue with next token
+  if (count(stopwords.begin(), stopwords.end(), word_token))
+    return false;
+  // if word is a number, continue with next token
+  if (is_number(word_token))
+    return false;
+  return true;
 }

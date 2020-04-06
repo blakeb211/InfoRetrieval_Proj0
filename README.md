@@ -31,3 +31,13 @@ Working Notes Step 1:
   Assign docIds to the documents - done
   Write function to load the stopwords - done
   Function 1. Read through the words in the files. Save the terms. Remove the stop words. 
+
+
+  INSTALL NOTES
+  Boost directory is c:\boost172
+  Boost Compilation Instructions:
+    bootstrap.bat
+    b2 -j8 toolset=msvc-14.2 address-model=64 architecture=x86 link=static threading=multi runtime-link=shared --build-type=complete
+
+  Add c:\boost172 to the Additional Include Directories
+  Add c:\boost172\stage\lib to the Additional Library Directories
