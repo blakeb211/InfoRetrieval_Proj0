@@ -60,6 +60,17 @@ void PrintMap(ostream &os, StringVecMap &map) {
   }
 }
 
+/*
+	MAP - Connects Terms (String) to a list of Postings (vector<Posting>)
+		Word 		====>	Posting List 
+		(String)			(<vector<Posting>)
+		
+	POSTING
+		Doc_ID	Integer		
+		Location Vector<int>
+		
+*/
+
 // Description: Iterate through the files. Tokenize the words.').
 // Remove stop words. Add doc_id and location to the dictionary.
 // Return Type: Map of strings to vector<Posting>
