@@ -21,6 +21,9 @@
     <ClCompile Include="Posting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MapBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="alice_wonderland_carroll.txt">
@@ -50,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Posting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
