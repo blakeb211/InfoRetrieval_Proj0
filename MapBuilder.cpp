@@ -5,14 +5,17 @@
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
-MapBuilder::MapBuilder(string StopwordsFilename, vector<string> InputFiles) {}
+MapBuilder::MapBuilder(string in_stopwords_filename, vector<string> in_input_filenames) {
+  stopwords_filename_ = in_stopwords_filename;
+  input_filenames_ = in_input_filenames;
+}
 
 // Destructor
 MapBuilder::~MapBuilder() {}
 
 // Description: Print a map<string, vector<Posting>> to an ostream
 // Return Type: void
-void MapBuilder::PrintMap(ostream& os, map<string, vector<Posting>>& map) {
+void MapBuilder::print_Map(ostream& os, map<string, vector<Posting>>& map) {
   for (auto map_iterator : map) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
@@ -33,14 +36,13 @@ void MapBuilder::PrintMap(ostream& os, map<string, vector<Posting>>& map) {
 // Description: Iterate through the files. Tokenize the words.').
 // Remove stop words. Add doc_id and location to the dictionary.
 // Return Type: Map of strings to vector<Posting>
-StringVecMap MapBuilder::BuildMap(const vector<string>& files,
-                                  vector<string>& v_stop) {
+StringVecMap MapBuilder::BuildMap() {
   cout << "Map is being built..." << endl;
   ifstream ifs;          // declare reusable ifstream
   StringVecMap tmp_map;  // declare map to be returned
   // Loop over filenames
-  for (int doc_id = 0; doc_id < kInputFilenames.size(); doc_id++) {
-    ifs = ifstream(files[doc_id], ios::in);
+  for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
+    ifs = ifstream(input_filenames_[doc_id], ios::in);
     string line;
     while (true) {
       getline(ifs, line, '\n');
@@ -53,7 +55,7 @@ StringVecMap MapBuilder::BuildMap(const vector<string>& files,
         // convert token to lowercase
         string lowercase = *word_iterator;
         boost::algorithm::to_lower(lowercase);
-        if (!is_Token_Valid(v_stop, lowercase))
+        if (!is_Token_Valid(lowercase))
           continue;
         // check whether term is already stored in map
         StringVecMap::iterator term_it = tmp_map.find(lowercase);
@@ -94,37 +96,34 @@ StringVecMap MapBuilder::BuildMap(const vector<string>& files,
 
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
-vector<string> MapBuilder::LoadStopWords() {
+void MapBuilder::load_Stopwords() {
   // Open stop_words file using constructor
   // that automatically opens the file in input mode.
-  ifstream f_stop(StopwordFile, ios::in);
+  ifstream f_stop(stopwords_filename_, ios::in);
   // Read stop words into vector until EOF
-  vector<string> v_words(0);
   string tmp;
   while (true) {
     f_stop >> tmp;
     if (!f_stop.good())
       break;
-    v_words.push_back(tmp);
+    stopwords_.push_back(tmp);
   }
   f_stop.close();
-  return v_words;
 }
 
-bool MapBuilder::is_number(const string& s) {
+bool MapBuilder::is_Number(const string& s) {
   string::const_iterator it = s.begin();
   while (it != s.end() && isdigit(*it))
     ++it;
   return !s.empty() && it == s.end();
 }
 
-bool MapBuilder::is_Token_Valid(const vector<string>& stopwords,
-                                const string word_token) {
+bool MapBuilder::is_Token_Valid(const string word_token) {
   // if word is a stop word, continue with next token
-  if (count(stopwords.begin(), stopwords.end(), word_token))
+  if (count(stopwords_.begin(), stopwords_.end(), word_token))
     return false;
   // if word is a number, continue with next token
-  if (is_number(word_token))
+  if (is_Number(word_token))
     return false;
   return true;
 }

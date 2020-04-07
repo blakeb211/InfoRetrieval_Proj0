@@ -1,23 +1,14 @@
 /*  main.cpp :    Blake Baird
     Description:  This file has the 'main' function that runs the program.
     */
-
-#include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <boost/tokenizer.hpp>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-
 #include "MapBuilder.h"
 #include "Posting.h"
 
 using namespace std;
+
 // Type defs
 typedef map<string, vector<Posting>> StringVecMap;
+
 // Define global constants
 const vector<string> kInputFilenames = {
     "alice_wonderland_carroll.txt",           "devils_dictionary_pierce.txt",
@@ -28,12 +19,12 @@ const string kStopwordFilename("stop_words.txt");
 int main() {
   // Initialize a vector to hold the stop words
   MapBuilder mb(kStopwordFilename, kInputFilenames);
-  vector<string> v_stop = mb.LoadStopWords();
+  mb.load_Stopwords();
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
-  StringVecMap dict = mb.BuildMap(kInputFilenames, v_stop);
+  StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
-  mb.PrintMap(outfile, dict);
+  mb.print_Map(outfile, dict);
   return 0;
 }
