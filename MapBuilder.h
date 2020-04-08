@@ -18,17 +18,20 @@ using std::ostream;
 class MapBuilder {
  public:
   // Constructor & Destructors
-  MapBuilder(string StopwordsFilename, vector<string> InputFiles);
-  ~MapBuilder();
+  MapBuilder(const string& StopwordsFilename, const vector<string>& InputFilenames)
+      : stopwords_filename_(StopwordsFilename), input_filenames_(InputFilenames) {}
+    ~MapBuilder(){};
+  
   // Function declarations
-  void load_Stopwords();
+  void loadStopwords();
   bool is_Token_Valid(const string word_token);
   map<string, vector<Posting>> BuildMap();
-  static void print_Map(ostream&, map<string, vector<Posting>>&);
+  static void printMap(ostream&, map<string, vector<Posting>>&);
   static bool is_Number(const string& s);
 
  private:
-  string stopwords_filename_;
+  // const member variables can only be modified in the constructor
+  const string stopwords_filename_;
+  const vector<string> input_filenames_;
   vector<string> stopwords_;
-  vector<string> input_filenames_;
 };

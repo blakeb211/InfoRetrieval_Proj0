@@ -5,17 +5,9 @@
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
-MapBuilder::MapBuilder(string in_stopwords_filename, vector<string> in_input_filenames) {
-  stopwords_filename_ = in_stopwords_filename;
-  input_filenames_ = in_input_filenames;
-}
-
-// Destructor
-MapBuilder::~MapBuilder() {}
-
 // Description: Print a map<string, vector<Posting>> to an ostream
 // Return Type: void
-void MapBuilder::print_Map(ostream& os, map<string, vector<Posting>>& map) {
+void MapBuilder::printMap(ostream& os, map<string, vector<Posting>>& map) {
   for (auto map_iterator : map) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
@@ -96,7 +88,7 @@ StringVecMap MapBuilder::BuildMap() {
 
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
-void MapBuilder::load_Stopwords() {
+void MapBuilder::loadStopwords() {
   // Open stop_words file using constructor
   // that automatically opens the file in input mode.
   ifstream f_stop(stopwords_filename_, ios::in);
