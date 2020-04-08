@@ -19,12 +19,15 @@ const string kStopwordFilename("stop_words.txt");
 int main() {
   // Initialize a vector to hold the stop words
   MapBuilder mb(kStopwordFilename, kInputFilenames);
-  mb.load_Stopwords();
+  mb.LoadStopwords();
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
-  StringVecMap dict = mb.BuildMap();
+  mb.GetTermsAndPostings();
+  mb.SortTerms();
+  mb.BuildDictionary();
+  // StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
-  mb.print_Map(outfile, dict);
+  mb.PrintMap(outfile, dict);
   return 0;
 }

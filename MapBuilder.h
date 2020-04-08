@@ -20,11 +20,15 @@ public:
   MapBuilder(string StopwordsFilename, vector<string> InputFiles);
   ~MapBuilder();
   // Function declarations
-  void load_Stopwords();
-  bool is_Token_Valid(const string word_token);
+  void LoadStopwords();
+  bool IsTokenValid(const string word_token);
+  void GetTermsAndPostings();
+  void SortTerms();
+  void BuildDictionary();
+
   map<string, vector<Posting>> BuildMap();
-  static void print_Map(ostream &, map<string, vector<Posting>> &);
-  static bool is_Number(const string &s);
+  static void PrintMap(ostream &, map<string, vector<Posting>> &);
+  static bool IsNumber(const string &s);
 
 private:
   string stopwords_filename_;
