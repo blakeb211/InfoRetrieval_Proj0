@@ -47,9 +47,9 @@ StringVecMap MapBuilder::BuildMap() {
     string line;
     while (true) {
       getline(ifs, line, '\n');
-      // Tokenize the line with boost tokenizer.
-      boost::tokenizer<> tok(line);
-      // TODO: fix the tokenizer to not include numbers
+      // Tokenize the line with
+      MapBuilder.Tokenize(line);
+
       // Loop over tokens
       for (auto word_iterator = tok.begin(); word_iterator != tok.end();
            word_iterator++) {
