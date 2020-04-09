@@ -126,13 +126,14 @@ void MapBuilder::GetTermsAndPostings() {
   cout << "GetTermsAndPostings method started..." << endl;
   ifstream ifs;  // declare reusable ifstream
   Tokenizer tok; // create re-usable Tokenizer object
-  vector<string> words;
+  vector<string> words(30);
   // Loop over filenames
   // doc_id holds the input_filenames_ array index of the current file
   // being processed
   for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
     ifs.open(input_filenames_[doc_id], ifstream::in);
     string line;
+    getline(ifs, line);
     words.clear();
     tok.ParseString(line, words);
   } // End of loop over filenames

@@ -24,11 +24,13 @@ int main() {
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
+  vector<string> words;
   Tokenizer tok;
   string target = "Test string to see if the light-hearted words get pulled "
                   "out! He said \' I shalt not go !\'";
-  tok.ParseString(target);
-
+  tok.ParseString(target, words);
+  for (auto i : words)
+    cout << i << endl;
   // StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
   outfile.close();
