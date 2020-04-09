@@ -1,24 +1,24 @@
 #pragma once
+#include <iostream>
 #include <regex>
 #include <string>
 #include <vector>
+
 using std::sregex_iterator;
 using std::string;
 using std::vector;
 
-// Tokenizer class takes a string and breaks it up into a
-// vector<string> of words. The class is reusable.
-class Tokenizer {
-public:
-  // set up tokenizer
-  Tokenizer(){};
-  ~Tokenizer() {}
-  sregex_iterator Begin() { return begin_; }
-  sregex_iterator End() { return end_; }
-  void ParseString(string &s, vector<string> &);
+namespace Tokenizer {
 
-private:
-  vector<string> tokens_{20};
-  sregex_iterator begin_;
-  sregex_iterator end_;
-};
+static void ParseString(string &s, vector<string> &matches) {
+  // build the regex for words with hyphens or apostrophes
+  std::regex word_regex("([a-zA-Z-']{2,})");
+  auto _begin = std::sregex_iterator(s.begin(), s.end(), word_regex);
+  auto _end = std::sregex_iterator();
+  std::cout << "Parsing string into tokens" << std::endl;
+  for (auto i = _begin; i != _end; ++i) {
+    matches.push_back(i->str());
+  }
+}
+
+} // namespace Tokenizer

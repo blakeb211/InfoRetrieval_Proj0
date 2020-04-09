@@ -6,8 +6,6 @@
 #include <iostream>
 #include <map>
 #include <regex>
-#include <string>
-#include <vector>
 
 using std::map;
 using std::ostream;
@@ -31,7 +29,7 @@ public:
   // void BuildDictionary();
 
   void PrintMap(ostream &, map<string, vector<Posting>> &);
-  bool IsNumber(const string &s);
+  static bool IsNumber(const string &s);
 
 private:
   string stopwords_filename_;

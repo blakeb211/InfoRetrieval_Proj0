@@ -15,12 +15,8 @@ void MapBuilder::PrintMap(ostream &os, map<string, vector<Posting>> &map) {
     for (auto posting_vector_iterator : map_iterator.second) {
       os << setw(0) << "Doc" << posting_vector_iterator.doc_id;
       os << " [";
-      int num_postings = posting_vector_iterator.location.size();
-      for (int location_id = 0; location_id < num_postings; location_id++) {
-        os << posting_vector_iterator.location[location_id] << " ";
-        if (location_id != num_postings - 1)
-          os << ", ";
-      }
+      int num_postings = posting_vector_iterator.frequency;
+      os << num_postings;
       os << "] ";
     }
     os << endl;
@@ -124,8 +120,7 @@ bool MapBuilder::IsTokenValid(const string word_token) {
 
 void MapBuilder::GetTermsAndPostings() {
   cout << "GetTermsAndPostings method started..." << endl;
-  ifstream ifs;  // declare reusable ifstream
-  Tokenizer tok; // create re-usable Tokenizer object
+  ifstream ifs; // declare reusable ifstream
   vector<string> words(30);
   // Loop over filenames
   // doc_id holds the input_filenames_ array index of the current file
@@ -135,6 +130,6 @@ void MapBuilder::GetTermsAndPostings() {
     string line;
     getline(ifs, line);
     words.clear();
-    tok.ParseString(line, words);
+    Tokenizer::ParseString(line, words);
   } // End of loop over filenames
 }

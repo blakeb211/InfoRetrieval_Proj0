@@ -25,10 +25,9 @@ int main() {
   // postings list (vector holding the files the word is located in and where it
   // occurs).
   vector<string> words;
-  Tokenizer tok;
   string target = "Test string to see if the light-hearted words get pulled "
                   "out! He said \' I shalt not go !\'";
-  tok.ParseString(target, words);
+  Tokenizer::ParseString(target, words);
   for (auto i : words)
     cout << i << endl;
   // StringVecMap dict = mb.BuildMap();
