@@ -3,6 +3,7 @@
     */
 #include "MapBuilder.h"
 #include "Posting.h"
+#include "Tokenizer.h"
 
 using namespace std;
 
@@ -23,8 +24,14 @@ int main() {
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
-  StringVecMap dict = mb.BuildMap();
+  Tokenizer tok;
+  string target = "Test string to see if the light-hearted words get pulled "
+                  "out! He said \' I shalt not go !\'";
+  tok.ParseString(target);
+
+  // StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
-  mb.PrintMap(outfile, dict);
+  outfile.close();
+  // mb.PrintMap(outfile, dict);
   return 0;
 }

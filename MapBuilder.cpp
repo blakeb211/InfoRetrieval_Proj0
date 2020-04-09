@@ -1,11 +1,11 @@
 #include "MapBuilder.h"
+#include "Tokenizer.h"
 #include <fstream>
 #include <iomanip>
+#include <ios>
+#include <iostream>
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
-
-// Destructor
-MapBuilder::~MapBuilder() {}
 
 // Description: Print a map<string, vector<Posting>> to an ostream
 // Return Type: void
@@ -30,63 +30,63 @@ void MapBuilder::PrintMap(ostream &os, map<string, vector<Posting>> &map) {
 // Description: Iterate through the files. Tokenize the words.').
 // Remove stop words. Add doc_id and location to the dictionary.
 // Return Type: Map of strings to vector<Posting>
-StringVecMap MapBuilder::BuildMap() {
-  cout << "Map is being built..." << endl;
-  ifstream ifs;         // declare reusable ifstream
-  StringVecMap tmp_map; // declare map to be returned
-  // Loop over filenames
-  for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
-    ifs = ifstream(input_filenames_[doc_id], ios::in);
-    string line;
-    while (true) {
-      getline(ifs, line, '\n');
-      // Tokenize the line with boost tokenizer.
-      mb.Tokenize(line);
-      // TODO: fix the tokenizer to not include numbers
-      // Loop over tokens
-      for (auto word_iterator = tok.begin(); word_iterator != tok.end();
-           word_iterator++) {
-        // convert token to lowercase
-        string lowercase = *word_iterator;
-        boost::algorithm::to_lower(lowercase);
-        if (!IsTokenValid(lowercase))
-          continue;
-        // check whether term is already stored in map
-        StringVecMap::iterator term_it = tmp_map.find(lowercase);
-        if (term_it == tmp_map.end()) {
-          // Term was *not* found in map, so add a new map entry
-          vector<Posting> v_post{Posting(doc_id, -1)};
-          tmp_map.emplace(lowercase, v_post);
-        } else {
-          // Term *was* found in map.
-          // Check if term was already found in this document.
-          // If it was already found, set flag to true and
-          // save the index in vector<posting> where it was already stored.
-          bool post_for_this_doc_id_already_exists = false;
-          int index_of_matching_post = -1;
-          for (int post_index = 0; post_index < (*term_it).second.size();
-               post_index++) {
-            if (term_it->second[post_index].doc_id == doc_id) {
-              post_for_this_doc_id_already_exists = true;
-              index_of_matching_post = post_index;
-            }
-          }
-          if (!post_for_this_doc_id_already_exists) {
-            // add this new word to the map
-            tmp_map[lowercase].emplace_back(Posting(doc_id, -1));
-          } else {
-            // add an additional location to the location vector
-            (tmp_map[lowercase])[index_of_matching_post].location.push_back(-1);
-          }
-        }
-      } // End of loop over tokens
-      if (!ifs.good())
-        break;
-    }
-    ifs.close();
-  } // end of loop over files
-  return tmp_map;
-}
+// StringVecMap MapBuilder::BuildMap() {
+//  cout << "Map is being built..." << endl;
+//  ifstream ifs;         // declare reusable ifstream
+//  StringVecMap tmp_map; // declare map to be returned
+//  // Loop over filenames
+//  for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
+//    ifs = ifstream(input_filenames_[doc_id], ios::in);
+//    string line;
+//    while (true) {
+//      getline(ifs, line, '\n');
+//      // Tokenize the line with boost tokenizer.
+//      mb.Tokenize(line);
+//      // TODO: fix the tokenizer to not include numbers
+//      // Loop over tokens
+//      for (auto word_iterator = tok.begin(); word_iterator != tok.end();
+//           word_iterator++) {
+//        // convert token to lowercase
+//        string lowercase = *word_iterator;
+//        boost::algorithm::to_lower(lowercase);
+//        if (!IsTokenValid(lowercase))
+//          continue;
+//        // check whether term is already stored in map
+//        StringVecMap::iterator term_it = tmp_map.find(lowercase);
+//        if (term_it == tmp_map.end()) {
+//          // Term was *not* found in map, so add a new map entry
+//          vector<Posting> v_post{Posting(doc_id, -1)};
+//          tmp_map.emplace(lowercase, v_post);
+//        } else {
+//          // Term *was* found in map.
+//          // Check if term was already found in this document.
+//          // If it was already found, set flag to true and
+//          // save the index in vector<posting> where it was already stored.
+//          bool post_for_this_doc_id_already_exists = false;
+//          int index_of_matching_post = -1;
+//          for (int post_index = 0; post_index < (*term_it).second.size();
+//               post_index++) {
+//            if (term_it->second[post_index].doc_id == doc_id) {
+//              post_for_this_doc_id_already_exists = true;
+//              index_of_matching_post = post_index;
+//            }
+//          }
+//          if (!post_for_this_doc_id_already_exists) {
+//            // add this new word to the map
+//            tmp_map[lowercase].emplace_back(Posting(doc_id, -1));
+//          } else {
+//            // add an additional location to the location vector
+//            (tmp_map[lowercase])[index_of_matching_post].location.push_back(-1);
+//          }
+//        }
+//      } // End of loop over tokens
+//      if (!ifs.good())
+//        break;
+//    }
+//    ifs.close();
+//  } // end of loop over files
+//  return tmp_map;
+//}
 
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
@@ -120,4 +120,20 @@ bool MapBuilder::IsTokenValid(const string word_token) {
   if (IsNumber(word_token))
     return false;
   return true;
+}
+
+void MapBuilder::GetTermsAndPostings() {
+  cout << "GetTermsAndPostings method started..." << endl;
+  ifstream ifs;  // declare reusable ifstream
+  Tokenizer tok; // create re-usable Tokenizer object
+  vector<string> words;
+  // Loop over filenames
+  // doc_id holds the input_filenames_ array index of the current file
+  // being processed
+  for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
+    ifs.open(input_filenames_[doc_id], ifstream::in);
+    string line;
+    words.clear();
+    tok.ParseString(line, words);
+  } // End of loop over filenames
 }

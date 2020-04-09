@@ -11,7 +11,8 @@
 
 using std::map;
 using std::ostream;
-
+using std::string;
+using std::vector;
 // Class with only object of it instantiated
 class MapBuilder {
 public:
@@ -26,15 +27,14 @@ public:
   void LoadStopwords();
   bool IsTokenValid(const string word_token);
   void GetTermsAndPostings();
-  void SortTerms();
-  void BuildDictionary();
+  // void SortTerms();
+  // void BuildDictionary();
 
-  map<string, vector<Posting>> BuildMap();
-  static void PrintMap(ostream &, map<string, vector<Posting>> &);
-  static bool IsNumber(const string &s);
+  void PrintMap(ostream &, map<string, vector<Posting>> &);
+  bool IsNumber(const string &s);
 
 private:
   string stopwords_filename_;
   vector<string> stopwords_;
-  vector<string> input_filenames_;
+  const vector<string> input_filenames_;
 };

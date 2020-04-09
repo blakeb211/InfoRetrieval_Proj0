@@ -2,9 +2,9 @@
 #include <regex>
 #include <string>
 #include <vector>
+using std::sregex_iterator;
 using std::string;
 using std::vector;
-typedef vector<string>::iterator Vec_It;
 
 // Tokenizer class takes a string and breaks it up into a
 // vector<string> of words. The class is reusable.
@@ -13,12 +13,12 @@ public:
   // set up tokenizer
   Tokenizer(){};
   ~Tokenizer() {}
-  Vec_It Begin() { return begin_; }
-  Vec_It End() { return end_; }
-  void ParseInput(string s);
+  sregex_iterator Begin() { return begin_; }
+  sregex_iterator End() { return end_; }
+  void ParseString(string &s, vector<string> &);
 
 private:
   vector<string> tokens_{20};
-  Vec_It begin_;
-  Vec_It end_;
+  sregex_iterator begin_;
+  sregex_iterator end_;
 };
