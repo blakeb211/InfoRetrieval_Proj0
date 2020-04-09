@@ -23,12 +23,7 @@ int main() {
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
-  // TODO: replace boost tokenizer with a regex  "/[\w|-]+/g"  for words
-  // TODO: Factor BuildMap into 3 functions and use a Linked List
-  mb.GetTermsAndPostings();
-  mb.SortTerms();
-  mb.BuildDictionary();
-  // StringVecMap dict = mb.BuildMap();
+  StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
   mb.PrintMap(outfile, dict);
   return 0;

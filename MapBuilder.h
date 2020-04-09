@@ -1,24 +1,27 @@
 #pragma once
-#include "Posting.h"
+#include <iostream>
+#include <map>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
 #include <fstream>
-#include <iostream>
+#include <iomanip>
 #include <map>
 #include <string>
+#include <vector>
+#include "Posting.h"
 
 using std::map;
 using std::ostream;
-using std::string;
-using std::vector;
 
 // Class with only object of it instantiated
 class MapBuilder {
-public:
+ public:
   // Constructor & Destructors
-  MapBuilder(string StopwordsFilename, vector<string> InputFiles);
-  ~MapBuilder();
+  MapBuilder(const string& StopwordsFilename, const vector<string>& InputFilenames)
+      : stopwords_filename_(StopwordsFilename), input_filenames_(InputFilenames) {}
+    ~MapBuilder(){};
+  
   // Function declarations
   void LoadStopwords();
   bool IsTokenValid(const string word_token);
