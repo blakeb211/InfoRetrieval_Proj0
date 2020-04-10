@@ -2,6 +2,7 @@
 
 Posting::Posting(int in_doc_id) {
   doc_id = in_doc_id;
+  frequency = 1;
   // add first element to the location vector
 }
 
