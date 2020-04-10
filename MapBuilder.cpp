@@ -1,5 +1,4 @@
 #include "MapBuilder.h"
-#include "Tokenizer.h"
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -118,18 +117,43 @@ bool MapBuilder::IsTokenValid(const string word_token) {
   return true;
 }
 
-void MapBuilder::GetTermsAndPostings() {
+void MapBuilder::ProcessInputFiles() {
   cout << "GetTermsAndPostings method started..." << endl;
   ifstream ifs; // declare reusable ifstream
-  vector<string> words(30);
+  std::regex word_regex("([a-zA-Z-']{2,})");
+  string line, token;
   // Loop over filenames
   // doc_id holds the input_filenames_ array index of the current file
   // being processed
+  cout << "Files to process: " << input_filenames_.size() << endl;
   for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
-    ifs.open(input_filenames_[doc_id], ifstream::in);
-    string line;
-    getline(ifs, line);
-    words.clear();
-    Tokenizer::ParseString(line, words);
+    ifs = ifstream(input_filenames_[doc_id], ifstream::in);
+    cout << "Opening " << input_filenames_[doc_id] << " ..." << endl;
+
+    do { // Start of loop over lines in file
+      getline(ifs, line);
+      // Run the regex expression
+      auto _begin = std::sregex_iterator(line.begin(), line.end(), word_regex);
+      auto _end = std::sregex_iterator();
+      for (auto word_iterator = _begin; word_iterator != _end;
+           ++word_iterator) {
+        token = (*word_iterator).str();
+        // Filter out stopwords and other invalid tokens that
+        // made it past the regex.
+        if (!IsTokenValid(token))
+          continue;
+        AddPostingToMap(token, doc_id);
+      }
+
+    } while (ifs.good()); // End of loop over lines in file
+    ifs.close();
   } // End of loop over filenames
+}
+
+void MapBuilder::AddPostingToMap(string, int) {
+  // Check if term is already in map
+  // if yes - increment frequency
+  // if no - add word and doc_id to map
+
+  // if inverted_index[term] == nullptr
 }
