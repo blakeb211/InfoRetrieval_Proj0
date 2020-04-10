@@ -16,6 +16,7 @@ const vector<string> kInputFilenames = {
     "principles_of_philosophy_descartes.txt", "turn_screw_james.txt"};
 const string kStopwordFilename("stop_words.txt");
 
+// TODO: ADD TESTS WITH GOOGLE TEST
 int main() {
   // Initialize a vector to hold the stop words
   MapBuilder mb(kStopwordFilename, kInputFilenames);
@@ -23,7 +24,7 @@ int main() {
   // Initialize a dictionary that takes the word (term) as a key and returns the
   // postings list (vector holding the files the word is located in and where it
   // occurs).
-  mb.ProcessInputFiles();
+  mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   // StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
   outfile.close();

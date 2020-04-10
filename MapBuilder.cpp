@@ -150,10 +150,15 @@ void MapBuilder::ProcessInputFiles() {
   } // End of loop over filenames
 }
 
-void MapBuilder::AddPostingToMap(string, int) {
+void MapBuilder::AddPostingToMap(string term, int doc_id) {
   // Check if term is already in map
   // if yes - increment frequency
   // if no - add word and doc_id to map
-
-  // if inverted_index[term] == nullptr
+  auto search_result = inverted_index.find(term);
+  if (search_result != inverted_index.end()) {
+    // increment frequency
+    // search_result->second.emplace_after(
+  } else {
+    // add term and posting to map
+  }
 }
