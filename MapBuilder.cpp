@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <ios>
 #include <iostream>
+#include <map>
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
@@ -153,22 +154,20 @@ void MapBuilder::ProcessInputFiles() {
 void MapBuilder::AddPostingToMap(string term, int doc_id) {
   // Check if term is already in map
   // if yes - increment frequency
-  // if no - add word and doc_id to map
-  auto search_result = inverted_index.find(term);
-  if (search_result != inverted_index.end()) {
-    // increment frequency
-    auto it = search_result->second.begin();
-    auto end_it = search_result->second.end();
-    // iterate through until 'it' points to the correct Posting
-    while (it->doc_id != doc_id && it != end_it) {
-      it++;
-    }
-    it->frequency++;
-    // search_result->second.emplace_after(
-  } else {
-    // Add the term to the map
-    inverted_index.insert(
-    search_result->second.emplace_front(Posting(doc_id));
-    // add term and posting to map
-  }
+  //// if no - add word and doc_id to map
+  // auto search_result = inverted_index.find(term);
+  // if (search_result != inverted_index.end()) {
+  //  // increment frequency
+  //  auto it = search_result->second.begin();
+  //  auto end_it = search_result->second.end();
+  //  // iterate through until 'it' points to the correct Posting
+  //  while (it->doc_id != doc_id && it != end_it) {
+  //    it++;
+  //  }
+  //  it->frequency++;
+  //} else {
+  //  // Add the term to the map
+  //  inverted_index.emplace(term, forward_list<Posting>{Posting(doc_id)});
+  //  // add term and posting to map
+  //}
 }
