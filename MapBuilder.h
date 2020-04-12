@@ -27,7 +27,7 @@ public:
   void LoadStopwords();
   bool IsTokenValid(const string);
   void ProcessInputFiles();
-  void AddPostingToMap(string, int);
+  void AddPostingToMap(string, int, int);
   unsigned int GetIndexSize() {
     int totalSize = sizeof(inverted_index);
     int noElements = 0;

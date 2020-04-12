@@ -69,6 +69,7 @@ void MapBuilder::ProcessInputFiles() {
   ifstream ifs; // declare reusable ifstream
   std::regex word_regex("([a-zA-Z]{1,}[']?[-]?[a-zA-Z]{1,})");
   string line, token;
+  unsigned int line_count = 0;
   // Loop over filenames
   // doc_id holds the input_filenames_ array index of the current file
   // being processed
@@ -76,9 +77,11 @@ void MapBuilder::ProcessInputFiles() {
   for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
     ifs = ifstream(input_filenames_[doc_id], ifstream::in);
     cout << "Opening " << input_filenames_[doc_id] << " ..." << endl;
+    // Set line_count = 0 at the beginning of each file.
 
     do { // Start of loop over lines in file
       getline(ifs, line);
+      line_count++;
       // Run the regex expression
       auto _begin = std::sregex_iterator(line.begin(), line.end(), word_regex);
       auto _end = std::sregex_iterator();
@@ -93,14 +96,14 @@ void MapBuilder::ProcessInputFiles() {
         // made it past the regex.
         if (!IsTokenValid(token))
           continue;
-        AddPostingToMap(token, doc_id);
+        AddPostingToMap(token, doc_id, line_count);
       }
     } while (ifs.good()); // End of loop over lines in file
     ifs.close();
   } // End of loop over filenames
 }
 
-void MapBuilder::AddPostingToMap(string term, int doc_id) {
+void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
   // Check if term is already in map
   // If yes - check if there is a node with the same doc_Id
   // If yes - increment frequency
@@ -119,11 +122,12 @@ void MapBuilder::AddPostingToMap(string term, int doc_id) {
       it->frequency++;
     } else {
       // No posting found with the same doc_id, so add a Posting
-      search_result->second.push_front(Posting(doc_id));
+      search_result->second.push_front(Posting(doc_id, line_count));
     }
   } else {
     // Add the term to the map and initialize the forward_list
     // with the first Posting
-    inverted_index.emplace(term, forward_list<Posting>{Posting(doc_id)});
+    inverted_index.emplace(term,
+                           forward_list<Posting>{Posting(doc_id, line_count)});
   }
 }
