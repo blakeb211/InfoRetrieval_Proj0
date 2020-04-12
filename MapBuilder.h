@@ -28,7 +28,19 @@ public:
   bool IsTokenValid(const string);
   void ProcessInputFiles();
   void AddPostingToMap(string, int);
-  unsigned int GetIndexSize() { return sizeof(inverted_index); }
+  unsigned int GetIndexSize() {
+    int totalSize = sizeof(inverted_index);
+    int noElements = 0;
+
+    for (std::map<string, forward_list<Posting>>::iterator i =
+             inverted_index.begin();
+         i != inverted_index.end(); i++)
+      noElements++;
+
+    totalSize += noElements * sizeof(string);
+    totalSize += noElements * sizeof(forward_list<Posting>);
+    return totalSize / 1024;
+  }
   void PrintMap(ostream &);
   static void ToLower(string &);
   static bool IsNumber(const string &s);
