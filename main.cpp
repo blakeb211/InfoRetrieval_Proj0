@@ -31,6 +31,6 @@ int main() {
   ofstream outfile("output.txt", ios::out);
   mb.PrintMap(outfile);
   outfile.close();
-  // mb.PrintMap(outfile, dict);
+  cout << "Size of inverted index: " << mb.GetIndexSize() << endl;
   return 0;
 }

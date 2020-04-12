@@ -17,7 +17,7 @@ You may want to figure out a calculation to define page number or paragraph numb
 
 6. Create an inverted index and store the location data in each term's record.
 
-7. Write more test cases.
+7. Write test cases.
 
 8. Design an interface to allow a user to enter a query.
 
@@ -32,6 +32,11 @@ Working Notes Step 1:
   Write function to load the stopwords - done
   Function 1. Read through the words in the files. Save the terms. Remove the stop words. - done
   Write tests using Google Test
+  Add location data
+  Write a user interface
+  Add a search function
+  Add a custom allocator to be able to report the size of the inverted index
+  Add method to serialize the map to disk
 
   INSTALL NOTES
   Boost directory is c:\boost172

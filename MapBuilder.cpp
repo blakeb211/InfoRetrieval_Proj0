@@ -82,10 +82,12 @@ void MapBuilder::ProcessInputFiles() {
       // Run the regex expression
       auto _begin = std::sregex_iterator(line.begin(), line.end(), word_regex);
       auto _end = std::sregex_iterator();
+      // Iterate over the tokens
       for (auto word_iterator = _begin; word_iterator != _end;
            ++word_iterator) {
+        // Convert token iterator to a std::string
         token = (*word_iterator).str();
-        // Convert token to lowercase before next step
+        // Convert token to lowercase
         ToLower(token);
         // Filter out stopwords and other invalid tokens that
         // made it past the regex.
@@ -93,7 +95,6 @@ void MapBuilder::ProcessInputFiles() {
           continue;
         AddPostingToMap(token, doc_id);
       }
-
     } while (ifs.good()); // End of loop over lines in file
     ifs.close();
   } // End of loop over filenames
@@ -117,13 +118,12 @@ void MapBuilder::AddPostingToMap(string term, int doc_id) {
     if (it != end_it) {
       it->frequency++;
     } else {
-      // no Posting found with the same doc_id, so add a Posting
-      search_result->second.emplace_after(search_result->second.before_begin(),
-                                          Posting(doc_id));
+      // No posting found with the same doc_id, so add a Posting
+      search_result->second.push_front(Posting(doc_id));
     }
   } else {
-    // Add the term to the map
+    // Add the term to the map and initialize the forward_list
+    // with the first Posting
     inverted_index.emplace(term, forward_list<Posting>{Posting(doc_id)});
-    // Add term and posting to map
   }
 }

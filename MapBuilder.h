@@ -28,7 +28,7 @@ public:
   bool IsTokenValid(const string);
   void ProcessInputFiles();
   void AddPostingToMap(string, int);
-
+  unsigned int GetIndexSize() { return sizeof(inverted_index); }
   void PrintMap(ostream &);
   static void ToLower(string &);
   static bool IsNumber(const string &s);
