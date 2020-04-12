@@ -1,4 +1,3 @@
-#pragma once
 #include "Posting.h"
 #include <algorithm>
 #include <forward_list>
@@ -31,6 +30,7 @@ public:
   void AddPostingToMap(string, int);
 
   void PrintMap(ostream &);
+  static void ToLower(string &);
   static bool IsNumber(const string &s);
 
 private:

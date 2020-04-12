@@ -1,4 +1,5 @@
 #include "MapBuilder.h"
+#include <algorithm>
 #include <cctype>
 #include <fstream>
 #include <iomanip>
@@ -22,6 +23,10 @@ void MapBuilder::PrintMap(ostream &os) {
     }
     os << endl;
   }
+}
+
+void MapBuilder::ToLower(string &s) {
+  transform(s.begin(), s.end(), s.begin(), tolower);
 }
 
 // Description: Load the words from a local
@@ -80,8 +85,7 @@ void MapBuilder::ProcessInputFiles() {
            ++word_iterator) {
         token = (*word_iterator).str();
         // Convert token to lowercase before next step
-        transform(token.begin(), token.end(), token.begin(),
-                  [](unsigned char c) { return std::tolower(c); });
+        ToLower(token);
         // Filter out stopwords and other invalid tokens that
         // made it past the regex.
         if (!IsTokenValid(token))
