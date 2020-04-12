@@ -15,10 +15,10 @@ void MapBuilder::PrintMap(ostream &os) {
   for (auto map_iterator : inverted_index) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
-      os << setw(0) << "Doc" << posting_vector_iterator.doc_id;
+      os << setw(0) << "Doc" << posting_vector_iterator.doc_id_;
       os << " [";
-      int num_postings = posting_vector_iterator.frequency;
-      os << num_postings;
+      os << posting_vector_iterator.location_;
+      ;
       os << "] ";
     }
     os << endl;
@@ -115,11 +115,11 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
     auto it = search_result->second.begin();
     auto end_it = search_result->second.end();
     // Iterate through until 'it' points to the correct Posting
-    while (it != end_it && it->doc_id != doc_id) {
+    while (it != end_it && it->doc_id_ != doc_id) {
       it++;
     }
     if (it != end_it) {
-      it->frequency++;
+      inverted_index[term].emplace_after(it, Posting(doc_id, line_count));
     } else {
       // No posting found with the same doc_id, so add a Posting
       search_result->second.push_front(Posting(doc_id, line_count));

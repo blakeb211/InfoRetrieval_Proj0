@@ -1,12 +1,10 @@
-
-
+#pragma once
 class Posting {
 public:
   Posting(int, int);
   Posting();
   ~Posting(){};
 
-private:
   int doc_id_;
   int location_;
 };

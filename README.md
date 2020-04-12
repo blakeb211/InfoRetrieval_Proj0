@@ -31,8 +31,8 @@ Working Notes Step 1:
   Assign docIds to the documents - done
   Write function to load the stopwords - done
   Function 1. Read through the words in the files. Save the terms. Remove the stop words. - done
+  Add location data - done
   Write tests using Google Test
-  Add location data
   Write a user interface
   Add a search function
   Add a custom allocator to be able to report the size of the inverted index
