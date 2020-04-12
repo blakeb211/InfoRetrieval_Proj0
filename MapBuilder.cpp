@@ -119,6 +119,7 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
       it++;
     }
     if (it != end_it) {
+      // Add an additional posting for this doc_id
       inverted_index[term].emplace_after(it, Posting(doc_id, line_count));
     } else {
       // No posting found with the same doc_id, so add a Posting

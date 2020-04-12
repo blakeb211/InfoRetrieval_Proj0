@@ -16,9 +16,8 @@ const vector<string> kInputFilenames = {
     "principles_of_philosophy_descartes.txt", "turn_screw_james.txt"};
 const string kStopwordFilename("stop_words.txt");
 
-// TODO: Read LinkedList tutorial
-// TODO: Complete AddPostingToMap
 // TODO: ADD TESTS WITH GOOGLE TEST
+// Sort Postings by Doc_Id and Location
 int main() {
   // Initialize a vector to hold the stop words
   MapBuilder mb(kStopwordFilename, kInputFilenames);
