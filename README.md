@@ -30,8 +30,8 @@ Working Notes Step 1:
   Create Stopwords txt file - done
   Assign docIds to the documents - done
   Write function to load the stopwords - done
-  Function 1. Read through the words in the files. Save the terms. Remove the stop words. 
-
+  Function 1. Read through the words in the files. Save the terms. Remove the stop words. - done
+  Write tests using Google Test
 
   INSTALL NOTES
   Boost directory is c:\boost172

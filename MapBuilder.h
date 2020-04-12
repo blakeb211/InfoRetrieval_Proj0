@@ -24,14 +24,13 @@ public:
   ~MapBuilder(){};
 
   // Function declarations
+
   void LoadStopwords();
   bool IsTokenValid(const string);
   void ProcessInputFiles();
   void AddPostingToMap(string, int);
-  // void SortTerms();
-  // void BuildDictionary();
 
-  void PrintMap(ostream &, map<string, vector<Posting>> &);
+  void PrintMap(ostream &);
   static bool IsNumber(const string &s);
 
 private:

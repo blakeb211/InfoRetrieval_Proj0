@@ -29,6 +29,7 @@ int main() {
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   // StringVecMap dict = mb.BuildMap();
   ofstream outfile("output.txt", ios::out);
+  mb.PrintMap(outfile);
   outfile.close();
   // mb.PrintMap(outfile, dict);
   return 0;

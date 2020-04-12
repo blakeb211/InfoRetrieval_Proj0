@@ -1,4 +1,5 @@
 #include "MapBuilder.h"
+#include <cctype>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -7,10 +8,10 @@
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
-// Description: Print a map<string, vector<Posting>> to an ostream
+// Description: Print a map<string, forward_list<Posting>> to an ostream
 // Return Type: void
-void MapBuilder::PrintMap(ostream &os, map<string, vector<Posting>> &map) {
-  for (auto map_iterator : map) {
+void MapBuilder::PrintMap(ostream &os) {
+  for (auto map_iterator : inverted_index) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
       os << setw(0) << "Doc" << posting_vector_iterator.doc_id;
@@ -22,67 +23,6 @@ void MapBuilder::PrintMap(ostream &os, map<string, vector<Posting>> &map) {
     os << endl;
   }
 }
-
-// Description: Iterate through the files. Tokenize the words.').
-// Remove stop words. Add doc_id and location to the dictionary.
-// Return Type: Map of strings to vector<Posting>
-// StringVecMap MapBuilder::BuildMap() {
-//  cout << "Map is being built..." << endl;
-//  ifstream ifs;         // declare reusable ifstream
-//  StringVecMap tmp_map; // declare map to be returned
-//  // Loop over filenames
-//  for (int doc_id = 0; doc_id < input_filenames_.size(); doc_id++) {
-//    ifs = ifstream(input_filenames_[doc_id], ios::in);
-//    string line;
-//    while (true) {
-//      getline(ifs, line, '\n');
-//      // Tokenize the line with boost tokenizer.
-//      mb.Tokenize(line);
-//      // TODO: fix the tokenizer to not include numbers
-//      // Loop over tokens
-//      for (auto word_iterator = tok.begin(); word_iterator != tok.end();
-//           word_iterator++) {
-//        // convert token to lowercase
-//        string lowercase = *word_iterator;
-//        boost::algorithm::to_lower(lowercase);
-//        if (!IsTokenValid(lowercase))
-//          continue;
-//        // check whether term is already stored in map
-//        StringVecMap::iterator term_it = tmp_map.find(lowercase);
-//        if (term_it == tmp_map.end()) {
-//          // Term was *not* found in map, so add a new map entry
-//          vector<Posting> v_post{Posting(doc_id, -1)};
-//          tmp_map.emplace(lowercase, v_post);
-//        } else {
-//          // Term *was* found in map.
-//          // Check if term was already found in this document.
-//          // If it was already found, set flag to true and
-//          // save the index in vector<posting> where it was already stored.
-//          bool post_for_this_doc_id_already_exists = false;
-//          int index_of_matching_post = -1;
-//          for (int post_index = 0; post_index < (*term_it).second.size();
-//               post_index++) {
-//            if (term_it->second[post_index].doc_id == doc_id) {
-//              post_for_this_doc_id_already_exists = true;
-//              index_of_matching_post = post_index;
-//            }
-//          }
-//          if (!post_for_this_doc_id_already_exists) {
-//            // add this new word to the map
-//            tmp_map[lowercase].emplace_back(Posting(doc_id, -1));
-//          } else {
-//            // add an additional location to the location vector
-//            (tmp_map[lowercase])[index_of_matching_post].location.push_back(-1);
-//          }
-//        }
-//      } // End of loop over tokens
-//      if (!ifs.good())
-//        break;
-//    }
-//    ifs.close();
-//  } // end of loop over files
-//  return tmp_map;
-//}
 
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
@@ -121,7 +61,7 @@ bool MapBuilder::IsTokenValid(const string word_token) {
 void MapBuilder::ProcessInputFiles() {
   cout << "GetTermsAndPostings method started..." << endl;
   ifstream ifs; // declare reusable ifstream
-  std::regex word_regex("([a-zA-Z-']{2,})");
+  std::regex word_regex("([a-zA-Z]{1,}[']?[-]?[a-zA-Z]{1,})");
   string line, token;
   // Loop over filenames
   // doc_id holds the input_filenames_ array index of the current file
@@ -139,6 +79,9 @@ void MapBuilder::ProcessInputFiles() {
       for (auto word_iterator = _begin; word_iterator != _end;
            ++word_iterator) {
         token = (*word_iterator).str();
+        // Convert token to lowercase before next step
+        transform(token.begin(), token.end(), token.begin(),
+                  [](unsigned char c) { return std::tolower(c); });
         // Filter out stopwords and other invalid tokens that
         // made it past the regex.
         if (!IsTokenValid(token))
@@ -153,21 +96,29 @@ void MapBuilder::ProcessInputFiles() {
 
 void MapBuilder::AddPostingToMap(string term, int doc_id) {
   // Check if term is already in map
-  // if yes - increment frequency
-  //// if no - add word and doc_id to map
-  // auto search_result = inverted_index.find(term);
-  // if (search_result != inverted_index.end()) {
-  //  // increment frequency
-  //  auto it = search_result->second.begin();
-  //  auto end_it = search_result->second.end();
-  //  // iterate through until 'it' points to the correct Posting
-  //  while (it->doc_id != doc_id && it != end_it) {
-  //    it++;
-  //  }
-  //  it->frequency++;
-  //} else {
-  //  // Add the term to the map
-  //  inverted_index.emplace(term, forward_list<Posting>{Posting(doc_id)});
-  //  // add term and posting to map
-  //}
+  // If yes - check if there is a node with the same doc_Id
+  // If yes - increment frequency
+  // If no - add a node with this doc_id
+  // If no - add word to map , create forward_list, and add first node
+  auto search_result = inverted_index.find(term);
+  if (search_result != inverted_index.end()) {
+    // Increment frequency
+    auto it = search_result->second.begin();
+    auto end_it = search_result->second.end();
+    // Iterate through until 'it' points to the correct Posting
+    while (it != end_it && it->doc_id != doc_id) {
+      it++;
+    }
+    if (it != end_it) {
+      it->frequency++;
+    } else {
+      // no Posting found with the same doc_id, so add a Posting
+      search_result->second.emplace_after(search_result->second.before_begin(),
+                                          Posting(doc_id));
+    }
+  } else {
+    // Add the term to the map
+    inverted_index.emplace(term, forward_list<Posting>{Posting(doc_id)});
+    // Add term and posting to map
+  }
 }
