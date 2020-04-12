@@ -26,6 +26,7 @@ void MapBuilder::PrintMap(ostream &os) {
 }
 
 void MapBuilder::ToLower(string &s) {
+  // May be faster to merge terms than to do this for every token
   transform(s.begin(), s.end(), s.begin(), tolower);
 }
 
