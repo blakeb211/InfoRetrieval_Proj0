@@ -26,7 +26,7 @@ int main() {
   // postings list (vector holding the files the word is located in and where it
   // occurs).
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
-  // StringVecMap dict = mb.BuildMap();
+  mb.SortMap();
   ofstream outfile("output.txt", ios::out);
   mb.PrintMap(outfile);
   outfile.close();

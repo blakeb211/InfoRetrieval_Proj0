@@ -9,15 +9,29 @@
 using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
+unsigned int MapBuilder::GetIndexSize() {
+  int totalSize = sizeof(inverted_index);
+  int noElements = 0;
+
+  for (std::map<string, forward_list<Posting>>::iterator i =
+           inverted_index.begin();
+       i != inverted_index.end(); i++) {
+    noElements++;
+  }
+  totalSize += noElements * sizeof(string);
+  totalSize += noElements * sizeof(forward_list<Posting>);
+  return totalSize / 1024;
+}
+
 // Description: Print a map<string, forward_list<Posting>> to an ostream
 // Return Type: void
 void MapBuilder::PrintMap(ostream &os) {
   for (auto map_iterator : inverted_index) {
     os << left << setw(20) << map_iterator.first;
     for (auto posting_vector_iterator : map_iterator.second) {
-      os << setw(0) << "Doc" << posting_vector_iterator.doc_id_;
+      os << setw(0) << "Doc" << posting_vector_iterator.DocId();
       os << " [";
-      os << posting_vector_iterator.location_;
+      os << posting_vector_iterator.Location();
       ;
       os << "] ";
     }
@@ -106,8 +120,8 @@ void MapBuilder::ProcessInputFiles() {
 void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
   // Check if term is already in map
   // If yes - check if there is a node with the same doc_Id
-  // If yes - increment frequency
-  // If no - add a node with this doc_id
+  //      If yes - increment frequency
+  //      If no - add a node with this doc_id
   // If no - add word to map , create forward_list, and add first node
   auto search_result = inverted_index.find(term);
   if (search_result != inverted_index.end()) {
@@ -115,7 +129,7 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
     auto it = search_result->second.begin();
     auto end_it = search_result->second.end();
     // Iterate through until 'it' points to the correct Posting
-    while (it != end_it && it->doc_id_ != doc_id) {
+    while (it != end_it && it->DocId() != doc_id) {
       it++;
     }
     if (it != end_it) {
@@ -130,5 +144,12 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
     // with the first Posting
     inverted_index.emplace(term,
                            forward_list<Posting>{Posting(doc_id, line_count)});
+  }
+}
+
+// Sort the forward_list of postings by doc_id and then location
+void MapBuilder::SortMap() {
+  for (auto &term_pair : inverted_index) {
+    term_pair.second.reverse();
   }
 }
