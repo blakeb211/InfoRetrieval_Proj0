@@ -150,4 +150,17 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
 }
 
 // Sort the forward_list of postings by doc_id and then location
-void MapBuilder::SortMap() {}
+void MapBuilder::SortMap() {
+  for (auto &pair_it : inverted_index) { // loop over pairs
+    pair_it.second
+        .reverse(); // reverse it first because we built the map backwards
+    // sort the forward_list<Posting> using a lambda
+    pair_it.second.sort([](Posting &a, Posting &b) {
+      if ((a.DocId() < b.DocId()) ||
+          (a.DocId() == b.DocId() && a.Location() < b.Location()))
+        return true;
+      else
+        return false;
+    });
+  }
+}
