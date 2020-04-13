@@ -30,8 +30,7 @@ public:
   void SortMap();
   unsigned int GetIndexSize();
   void PrintMap(ostream &);
-  static void ToLower(string &);
-  static bool IsNumber(const string &s);
+  int GetFrequency(string);
 
 private:
   string stopwords_filename_;

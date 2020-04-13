@@ -1,4 +1,5 @@
 #include "MapBuilder.h"
+#include "Utility.h"
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -38,10 +39,20 @@ void MapBuilder::PrintMap(ostream &os) {
     os << endl;
   }
 }
-
-void MapBuilder::ToLower(string &s) {
-  // May be faster to merge terms than to do this for every token
-  transform(s.begin(), s.end(), s.begin(), tolower);
+// Count total number of postings for the term in the map
+int MapBuilder::GetFrequency(string term) {
+  Utility::ToLower(term);
+  int count = 0;
+  auto search_result = inverted_index.find(term);
+  if (search_result == inverted_index.end()) {
+    count = 0;
+  } else {
+    for (auto it = search_result->second.begin();
+         it != search_result->second.end(); it++) {
+      count++;
+    }
+  }
+  return count;
 }
 
 // Description: Load the words from a local
@@ -61,20 +72,11 @@ void MapBuilder::LoadStopwords() {
   f_stop.close();
 }
 
-bool MapBuilder::IsNumber(const string &s) {
-  string::const_iterator it = s.begin();
-  while (it != s.end() && isdigit(*it))
-    ++it;
-  return !s.empty() && it == s.end();
-}
-
 bool MapBuilder::IsTokenValid(const string word_token) {
   // if word is a stop word, continue with next token
   if (count(stopwords_.begin(), stopwords_.end(), word_token))
     return false;
   // if word is a number, continue with next token
-  if (IsNumber(word_token))
-    return false;
   return true;
 }
 
@@ -105,7 +107,7 @@ void MapBuilder::ProcessInputFiles() {
         // Convert token iterator to a std::string
         token = (*word_iterator).str();
         // Convert token to lowercase
-        ToLower(token);
+        Utility::ToLower(token);
         // Filter out stopwords and other invalid tokens that
         // made it past the regex.
         if (!IsTokenValid(token))
@@ -148,8 +150,4 @@ void MapBuilder::AddPostingToMap(string term, int doc_id, int line_count) {
 }
 
 // Sort the forward_list of postings by doc_id and then location
-void MapBuilder::SortMap() {
-  for (auto &term_pair : inverted_index) {
-    term_pair.second.reverse();
-  }
-}
+void MapBuilder::SortMap() {}
