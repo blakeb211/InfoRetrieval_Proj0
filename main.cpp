@@ -3,7 +3,9 @@
     */
 #include "MapBuilder.h"
 #include "Posting.h"
-#include "boost/algorithm/string.hpp"
+#include "Search.h"
+#include <cassert>
+#include <algorithm>
 
 using namespace std;
 
@@ -13,8 +15,8 @@ typedef map<string, vector<Posting>> StringVecMap;
 // Define global constants
 const vector<string> kInputFilenames = {
     "alice_wonderland_carroll.txt",           "devils_dictionary_pierce.txt",
-    "great_expectations_dickens.txt",         "pride_prejudice_austen.txt",
-    "principles_of_philosophy_descartes.txt", "turn_screw_james.txt"};
+	"great_expectations_dickens.txt",         "pride_prejudice_austen.txt"};
+ //   "principles_of_philosophy_descartes.txt", "turn_screw_james.txt"};
 const string kStopwordFilename("stop_words.txt");
 
 int main() {
@@ -26,79 +28,71 @@ int main() {
   // occurs).
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   mb.SortMap();
-  // Write the map to an output file
-  // ofstream outfile("output.txt", ios::out);
-  // mb.PrintMap(outfile);
-  // outfile.close();
 
   // Show a user interface to search the map
-  string user_input;
+
   while (1) {
-    cout << "Enter terms to search (or q to quit):" << endl;
-    getline(cin, user_input);
-    if (user_input == "q")
-      break;
-    vector<string> result{};
-    boost::split(result, user_input, boost::is_any_of(" "));
-    vector<string> search_words_in_map{};
-    vector<forward_list<Posting>::iterator> pointers{};
-    // Get an interator to the linked list for each term
-    for (auto word : result) {
-      if (mb.GetFrequency(word) > 0) {
-        search_words_in_map.emplace_back(word);
-        pointers.emplace_back(mb.GetIterator(word));
-      }
+
+  
+	// Break user input up into a vector of strings called search_words
+    vector<string> search_words = Search::GetSearchTerms();
+	
+	// Get two iterators for each search term. 
+	// 		+	One is a "moving_iterator" that will move forward as the search 
+	//			algorithm progresses.
+	// 		+	The other is an end iterator to tell when the "moving_iterator" gets to the 
+	// 			end.
+	
+	vector<Search::Crawler> crawlers;
+    bool SOME_TERMS_NOT_IN_MAP = false;
+	for (auto word : search_words) {
+      if (mb.GetFrequency(word) == 0) {
+		  SOME_TERMS_NOT_IN_MAP = true; 
+		  break;
+	  }
+		// Build a vector of Search::Crawler that holds the moving iterator, the end iterator, the word, and a flag
+		// for whether we have reached the end with that crawler.
+		// Search is over when all crawlers have reached the end.
+		crawlers.emplace_back(Crawler(mb.GetIterator(word), mb.GetEndIterator(word), word);
     }
-    assert(search_words_in_map.size() == pointers.size());
-    // Start the search algorithm
-    vector<int> files_with_the_terms{};
-    while (1) {
+	if (SOME_TERMS_NOT_IN_MAP) {
+		cout << "One or more search terms not found in any files." << endl;
+		continue;
+	}	
+    
+
+	// Start the search algorithm
+    /* Maintain markers into both lists and walk through the two postings lists simultaneously.
+	At each step, compare the DocID pointed to by both pointers.
+	If they are the same, put that DocID in a result list, else advance the pointer pointing to the smaller docID. */
+	
+	vector<int> doc_ids_with_all_terms{};
+    
+	
+	while (1) {
       // check if all ptrs point to the same doc_id
       // if yes - add that document to the result
-      int doc_id_first_pointer = -2;
-      int lowest_doc_id = 999;
-      int index_of_ptr_with_lowest_doc_id = -1;
-      for (int ptr_and_word_index = 0; ptr_and_word_index < pointers.size();
-           ptr_and_word_index++) {
-        auto ptr_index = pointers[ptr_and_word_index];
-        // update lowest doc_id
-        if (ptr_index->DocId() < lowest_doc_id) {
-          lowest_doc_id = ptr_index->DocId();
-          index_of_ptr_with_lowest_doc_id = ptr_and_word_index;
-          if (pointers[index_of_ptr_with_lowest_doc_id] ==
-              mb.GetEndIterator(
-                  search_words_in_map[index_of_ptr_with_lowest_doc_id])) {
-            // search is done
-            break;
-          }
-        }
-        if (doc_id_first_pointer == -2) {
-          doc_id_first_pointer = ptr_index->DocId();
-        } else {
-          if (ptr_index->DocId() != doc_id_first_pointer) {
-            doc_id_first_pointer = -1;
-            break;
-          }
-        }
-      } // End of loop over pointers
-        // if doc_id_first_pointer == -1, they did not match. increment the
-        // lowest pointer.
-      if (doc_id_first_pointer >= 0)
-        files_with_the_terms.emplace_back(doc_id_first_pointer);
-      // increment lowest pointer
-      pointers[index_of_ptr_with_lowest_doc_id]++;
-      if (pointers[index_of_ptr_with_lowest_doc_id] ==
-          mb.GetEndIterator(
-              search_words_in_map[index_of_ptr_with_lowest_doc_id])) {
-        // search is done
-        break;
-      }
-
-    } // End of search while loop
-    cout << "Terms found in files: " << endl;
-    for (int i = 0; i < files_with_the_terms.size(); i++) {
+	  vector<int> current_doc_ids{};
+	  for(auto &i : moving_iterators) {
+		  current_doc_ids.push_back(i->DocId());
+	  }
+	  // Check if doc_id for all the moving_iterators is the same
+	  if (count(current_doc_ids.begin(),current_doc_ids.end(), current_doc_ids[0]) == current_doc_ids.size()) {
+		doc_ids_with_all_terms.push_back(current_doc_ids[0]);  
+	  }
+	  // Move Iterator with lowest doc_id forward
+	  // start by sorting current doc_id, low to high
+	  // Lowest doc_id pointed to is thus current_doc_ids[0].
+	  current_doc_ids.sort();
+	  	  
+	} // End of search while loop
+    
+	
+	// Print out the files that have the terms
+	cout << "Terms found in: " << endl;
+    for (auto i : doc_ids_with_all_terms) {
       cout << kInputFilenames[i] << endl;
-    }
-  }
+    } 
+  } 
   return 0;
 }

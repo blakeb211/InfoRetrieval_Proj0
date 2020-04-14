@@ -31,6 +31,7 @@ public:
   unsigned int GetIndexSize();
   void PrintMap(ostream &);
   int GetFrequency(string);
+  void WriteInvertedIndexToFile();
   forward_list<Posting>::iterator GetIterator(string);
   forward_list<Posting>::iterator GetEndIterator(string);
 

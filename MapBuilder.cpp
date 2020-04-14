@@ -172,3 +172,10 @@ void MapBuilder::SortMap() {
     });
   }
 }
+
+// Write the map to an output file
+void MapBuilder::WriteInvertedIndexToFile() {
+	ofstream outfile("output.txt", ios::out);
+	PrintMap(outfile);
+	outfile.close();
+}
