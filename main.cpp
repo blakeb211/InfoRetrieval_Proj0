@@ -27,9 +27,9 @@ int main() {
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   mb.SortMap();
   // Write the map to an output file
-  ofstream outfile("output.txt", ios::out);
-  mb.PrintMap(outfile);
-  outfile.close();
+  // ofstream outfile("output.txt", ios::out);
+  // mb.PrintMap(outfile);
+  // outfile.close();
 
   // Show a user interface to search the map
   string user_input;
@@ -65,6 +65,12 @@ int main() {
         if (ptr_index->DocId() < lowest_doc_id) {
           lowest_doc_id = ptr_index->DocId();
           index_of_ptr_with_lowest_doc_id = ptr_and_word_index;
+          if (pointers[index_of_ptr_with_lowest_doc_id] ==
+              mb.GetEndIterator(
+                  search_words_in_map[index_of_ptr_with_lowest_doc_id])) {
+            // search is done
+            break;
+          }
         }
         if (doc_id_first_pointer == -2) {
           doc_id_first_pointer = ptr_index->DocId();
@@ -80,13 +86,13 @@ int main() {
       if (doc_id_first_pointer >= 0)
         files_with_the_terms.emplace_back(doc_id_first_pointer);
       // increment lowest pointer
+      pointers[index_of_ptr_with_lowest_doc_id]++;
       if (pointers[index_of_ptr_with_lowest_doc_id] ==
           mb.GetEndIterator(
               search_words_in_map[index_of_ptr_with_lowest_doc_id])) {
         // search is done
         break;
       }
-      pointers[index_of_ptr_with_lowest_doc_id]++;
 
     } // End of search while loop
     cout << "Terms found in files: " << endl;
