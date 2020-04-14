@@ -3,6 +3,7 @@
     */
 #include "MapBuilder.h"
 #include "Posting.h"
+#include "boost/algorithm/string.hpp"
 
 using namespace std;
 
@@ -25,10 +26,20 @@ int main() {
   // occurs).
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   mb.SortMap();
+  // Write the map to an output file
   ofstream outfile("output.txt", ios::out);
   mb.PrintMap(outfile);
   outfile.close();
-  cout << "Size of inverted index (in kilobytes): " << mb.GetIndexSize()
-       << endl;
+
+  // Show a user interface to search the map
+  string user_input;
+  while (1) {
+    cout << "Enter terms to search (or q to quit):" << endl;
+    getline(cin, user_input);
+    if (user_input == "q")
+      break;
+    vector<string> result;
+    boost::split(result, user_input, boost::is_any_of(" "));
+  }
   return 0;
 }
