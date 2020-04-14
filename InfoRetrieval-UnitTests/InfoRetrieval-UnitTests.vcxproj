@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="..\MapBuilder.cpp" />
     <ClCompile Include="..\Posting.cpp" />
+    <ClCompile Include="..\Utility.cpp" />
     <ClCompile Include="InfoRetrieval-UnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
