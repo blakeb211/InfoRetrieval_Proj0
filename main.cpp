@@ -70,22 +70,16 @@ int main() {
     
 	
 	while (1) {
-      // check if all ptrs point to the same doc_id
-      // if yes - add that document to the result
-	  vector<int> current_doc_ids{};
-	  for(auto &i : moving_iterators) {
-		  current_doc_ids.push_back(i->DocId());
-	  }
-	  // Check if doc_id for all the moving_iterators is the same
-	  if (count(current_doc_ids.begin(),current_doc_ids.end(), current_doc_ids[0]) == current_doc_ids.size()) {
-		doc_ids_with_all_terms.push_back(current_doc_ids[0]);  
-	  }
-	  // Move Iterator with lowest doc_id forward
-	  // start by sorting current doc_id, low to high
-	  // Lowest doc_id pointed to is thus current_doc_ids[0].
-	  current_doc_ids.sort();
-	  	  
-	} // End of search while loop
+		
+		// Get Lowest DocId. - If -1 is returned then break out of while loop
+	  	
+		// Check if all crawlers have same docid. 
+		// 		If so, add doc_id to doc_ids_with_all_terms
+		
+		// Move all crawlers forward that have the low doc_id
+		
+		
+	} // end of while loop
     
 	
 	// Print out the files that have the terms
