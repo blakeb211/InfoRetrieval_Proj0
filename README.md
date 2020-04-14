@@ -34,9 +34,10 @@ Working Notes Step 1:
   Add location data - done
   Write tests using Google Test
   Write a user interface
-  Add a search function
-  Add a custom allocator to be able to report the size of the inverted index
-  Add method to serialize the map to disk
+  Add a search function ****
+  OPTIONAL:
+		Add a custom allocator to be able to report the size of the inverted index
+		Add method to serialize the map to disk  - Might be better as a separate project
 
   INSTALL NOTES
   Boost directory is c:\boost172
@@ -46,3 +47,10 @@ Working Notes Step 1:
 
   Add c:\boost172 to the Additional Include Directories
   Add c:\boost172\stage\lib to the Additional Library Directories
+  
+  
+NOTEPAD++ NPPEXEC Command To Build On The Fly
+npp_save
+cd $(CURRENT_DIRECTORY)
+clang++ -I c:\boost172 -L c:\boost172\stage\lib -llibboost_system-vc142-mt-gd-x64-1_72.lib *.cpp
+cmd /c $(CURRENT_DIRECTORY)\a.exe
