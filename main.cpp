@@ -38,20 +38,20 @@ int main() {
     getline(cin, user_input);
     if (user_input == "q")
       break;
-    vector<string> result;
+    vector<string> result{};
     boost::split(result, user_input, boost::is_any_of(" "));
-    vector<string> search_words_in_map;
-    vector<forward_list<Posting>::iterator> pointers;
+    vector<string> search_words_in_map{};
+    vector<forward_list<Posting>::iterator> pointers{};
     // Get an interator to the linked list for each term
     for (auto word : result) {
       if (mb.GetFrequency(word) > 0) {
-        search_words_in_map.push_back(word);
-        pointers.push_back(mb.GetIterator(word));
+        search_words_in_map.emplace_back(word);
+        pointers.emplace_back(mb.GetIterator(word));
       }
     }
     assert(search_words_in_map.size() == pointers.size());
     // Start the search algorithm
-    vector<int> files_with_the_terms;
+    vector<int> files_with_the_terms{};
     while (1) {
       // check if all ptrs point to the same doc_id
       // if yes - add that document to the result
@@ -78,7 +78,7 @@ int main() {
         // if doc_id_first_pointer == -1, they did not match. increment the
         // lowest pointer.
       if (doc_id_first_pointer >= 0)
-        files_with_the_terms.push_back(doc_id_first_pointer);
+        files_with_the_terms.emplace_back(doc_id_first_pointer);
       // increment lowest pointer
       if (pointers[index_of_ptr_with_lowest_doc_id] ==
           mb.GetEndIterator(
