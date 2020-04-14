@@ -31,6 +31,7 @@ public:
   unsigned int GetIndexSize();
   void PrintMap(ostream &);
   int GetFrequency(string);
+  forward_list<Posting>::iterator GetIterator(string);
 
 private:
   string stopwords_filename_;

@@ -40,6 +40,35 @@ int main() {
       break;
     vector<string> result;
     boost::split(result, user_input, boost::is_any_of(" "));
+    vector<string> search_words_in_map;
+    vector<forward_list<Posting>::iterator> pointers;
+    // Get an interator to the linked list for each term
+    for (auto word : result) {
+      if (mb.GetFrequency(word) > 0) {
+        search_words_in_map.push_back(word);
+        pointers.push_back(mb.GetIterator(word));
+      }
+    }
+    assert(search_words_in_map.size() == pointers.size());
+    // Start the search algorithm
+    vector<int> files_with_the_terms;
+    while (1) {
+      // check if all ptrs point to the same doc_id
+      // if yes - add that document to the result
+      int doc_id_first_pointer = -1;
+      for (auto ptr_index : pointers) {
+        if (doc_id_first_pointer == -1) {
+          doc_id_first_pointer = ptr_index->DocId();
+        } else {
+          if (ptr_index->DocId() != doc_id_first_pointer) {
+            doc_id_first_pointer = -1;
+            break;
+          }
+        }
+      } // End of loop over pointers
+        // if doc_id_first_pointer == -1, they did not match. increment the
+        // lowest pointer.
+    }   // End of search while loop
   }
   return 0;
 }

@@ -55,6 +55,10 @@ int MapBuilder::GetFrequency(string term) {
   return count;
 }
 
+forward_list<Posting>::iterator MapBuilder::GetIterator(string s) {
+  return inverted_index.find(s)->second.begin();
+}
+
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
 void MapBuilder::LoadStopwords() {
