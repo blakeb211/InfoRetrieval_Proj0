@@ -32,6 +32,7 @@ public:
   void PrintMap(ostream &);
   int GetFrequency(string);
   forward_list<Posting>::iterator GetIterator(string);
+  forward_list<Posting>::iterator GetEndIterator(string);
 
 private:
   string stopwords_filename_;

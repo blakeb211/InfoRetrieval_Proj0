@@ -55,9 +55,16 @@ int main() {
     while (1) {
       // check if all ptrs point to the same doc_id
       // if yes - add that document to the result
-      int doc_id_first_pointer = -1;
+      int doc_id_first_pointer = -2;
+      int lowest_doc_id = 999;
+      forward_list<Posting>::iterator ptr_with_lowest_doc_id;
       for (auto ptr_index : pointers) {
-        if (doc_id_first_pointer == -1) {
+        // update lowest doc_id
+        if (ptr_index->DocId() < lowest_doc_id) {
+          lowest_doc_id = ptr_index->DocId();
+          ptr_with_lowest_doc_id = ptr_index;
+        }
+        if (doc_id_first_pointer == -2) {
           doc_id_first_pointer = ptr_index->DocId();
         } else {
           if (ptr_index->DocId() != doc_id_first_pointer) {
@@ -68,7 +75,13 @@ int main() {
       } // End of loop over pointers
         // if doc_id_first_pointer == -1, they did not match. increment the
         // lowest pointer.
-    }   // End of search while loop
+      if (doc_id_first_pointer >= 0)
+        files_with_the_terms.push_back(doc_id_first_pointer);
+      // increment lowest pointer
+
+      ptr_with_lowest_doc_id++;
+
+    } // End of search while loop
   }
   return 0;
 }

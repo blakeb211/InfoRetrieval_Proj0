@@ -59,6 +59,10 @@ forward_list<Posting>::iterator MapBuilder::GetIterator(string s) {
   return inverted_index.find(s)->second.begin();
 }
 
+forward_list<Posting>::iterator MapBuilder::GetEndIterator(string s) {
+  return inverted_index.find(s)->second.end();
+}
+
 // Description: Load the words from a local
 // file. Return Type: Return a vector of strings
 void MapBuilder::LoadStopwords() {
