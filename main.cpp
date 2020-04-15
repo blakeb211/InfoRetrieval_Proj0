@@ -56,60 +56,47 @@ int main() {
     // "moving_iterator" gets to the 			end. - called End_Marker
 
     /* START INITIALIZE CRAWLERS */
-    vector<Search::Crawler> crawlers;
     bool SOME_TERMS_NOT_IN_MAP = false;
     for (int i = 0; i < search_words.size(); i++) {
       if (mb.GetFrequency(search_words[i]) == 0) {
         SOME_TERMS_NOT_IN_MAP = true;
         break;
       }
-      // Build a vector of Search::Crawler that holds the moving iterator, the
-      // end iterator, the word, and a flag for whether we have reached the end
-      // with that crawler. Search is over when all crawlers have reached the
-      // end.
-      Utility::ToLower(search_words[i]);
-      crawlers.emplace_back(Search::Crawler(mb.GetIterator(search_words[i]),
-                                            mb.GetEndIterator(search_words[i]),
-                                            search_words[i]));
     }
+
     if (SOME_TERMS_NOT_IN_MAP) {
       cout << "One or more search terms not found in any files." << endl;
       continue;
     }
     /* END INITIALIZE CRAWLERS */
 
+    // print docids for terms
+    for (int word_id = 0; word_id < search_words.size(); word_id++) {
+      auto map_it = mb.GetIterator(search_words[word_id]);
+      cout << "Word: " << search_words[word_id];
+      auto end_it = mb.GetEndIterator(search_words[word_id]);
+      while (map_it != end_it) {
+        cout << map_it->DocId() << " ";
+        map_it++;
+      }
+      cout << endl;
+    }
+
     // Start the search algorithm
     /* 1.	Maintain markers into both lists and walk through the two
        postings lists simultaneously.
-           2. 	At each step, compare the DocID pointed to by both pointers.
-           3.	If they are the same, put that DocID in a result list, else
+       2. 	At each step, compare the DocID pointed to by both pointers.
+       3.	If they are the same, put that DocID in a result list, else
        advance the pointer pointing to the smaller docID. */
 
-    vector<int> doc_ids_with_all_terms{};
-
-    while (1) {
-      // Find the lowest doc_id out of all the moving iterators.
-      int lowest_doc_id = Search::GetLowestDocId(crawlers);
-      // If all crawlers have ended, break out of loop.
-      if (lowest_doc_id == -1)
-        break;
-      // Check if all crawlers have same docid.
-      // 		If so, add doc_id to doc_ids_with_all_terms
-      if (Search::AllDocIdsTheSame(crawlers)) {
-        doc_ids_with_all_terms.push_back(lowest_doc_id);
-      }
-      // Move all crawlers forward that have the low doc_id
-      Search::MoveCrawlersForward(crawlers, lowest_doc_id);
-    } // end of while loop
-
-    // Remove duplicates in doc_ids_with_all_terms
-    Search::MakeUnique(doc_ids_with_all_terms);
-
-    // Print out the files that have the terms
-    cout << "Terms found in: " << endl;
-    for (auto i : doc_ids_with_all_terms) {
-      cout << kInputFilenames[i] << endl;
+    if (search_words.size() == 1) {
     }
+
+    if (search_words.size() == 2) {
+    }
+    vector<int> doc_ids_with_all_terms{};
+    // it = set_intersection(vector1.begin(), vector1.end(), vector2.begin(),
+    //                      vector2.end(), v.begin());
 
   } // end of outer while loop
   return 0;
