@@ -14,11 +14,10 @@ using namespace std;
 typedef map<string, vector<Posting>> StringVecMap;
 
 // Define global constants
-const vector<string> kInputFilenames = {"alice_wonderland_carroll.txt",
-                                        "turn_screw_james.txt"};
-//"devils_dictionary_pierce.txt",
-//"great_expectations_dickens.txt",         "pride_prejudice_austen.txt"};
-//   "principles_of_philosophy_descartes.txt", };
+const vector<string> kInputFilenames = {
+    "alice_wonderland_carroll.txt", "turn_screw_james.txt",
+    "devils_dictionary_pierce.txt", "great_expectations_dickens.txt",
+    "pride_prejudice_austen.txt",   "principles_of_philosophy_descartes.txt"};
 
 // TEST CASES
 // actually - both docs
@@ -73,7 +72,7 @@ int main() {
     // print docids for terms
     for (int word_id = 0; word_id < search_words.size(); word_id++) {
       auto map_it = mb.GetIterator(search_words[word_id]);
-      cout << "Word: " << search_words[word_id];
+      cout << "Word: " << search_words[word_id] << " ";
       auto end_it = mb.GetEndIterator(search_words[word_id]);
       while (map_it != end_it) {
         cout << map_it->DocId() << " ";
@@ -83,20 +82,37 @@ int main() {
     }
 
     // Start the search algorithm
-    /* 1.	Maintain markers into both lists and walk through the two
-       postings lists simultaneously.
-       2. 	At each step, compare the DocID pointed to by both pointers.
-       3.	If they are the same, put that DocID in a result list, else
-       advance the pointer pointing to the smaller docID. */
-
-    if (search_words.size() == 1) {
+    // Combine all doc ids into a master list
+    vector<int> master_doc_list{};
+    for (int word_id = 0; word_id < search_words.size(); word_id++) {
+      auto it = mb.GetIterator(search_words[word_id]);
+      auto end_it = mb.GetEndIterator(search_words[word_id]);
+      while (it != end_it) {
+        master_doc_list.push_back(it->DocId());
+        it++;
+      }
     }
+    // Make the master list unique
+    Search::MakeUnique(master_doc_list);
 
-    if (search_words.size() == 2) {
-    }
+    // If a doc_id in the master list is in all the lists, then it goes to the
+    // results list, doc_ids_with_all_terms
     vector<int> doc_ids_with_all_terms{};
-    // it = set_intersection(vector1.begin(), vector1.end(), vector2.begin(),
-    //                      vector2.end(), v.begin());
+    for (auto doc : master_doc_list) {
+      bool IS_IN_ALL = true;
+      for (int word_id = 0; word_id < search_words.size(); word_id++) {
+        auto it = mb.GetIterator(search_words[word_id]);
+        auto end_it = mb.GetEndIterator(search_words[word_id]);
+        if (Search::CountDocId(it, end_it, doc) == 0) {
+          IS_IN_ALL = false;
+        }
+      }
+      if (IS_IN_ALL == true)
+        doc_ids_with_all_terms.push_back(doc);
+    }
+
+    for (auto i : doc_ids_with_all_terms)
+      cout << kInputFilenames[i] << endl;
 
   } // end of outer while loop
   return 0;

@@ -15,4 +15,6 @@ vector<string> GetSearchTerms();
 
 void MakeUnique(vector<int> &);
 
+int CountDocId(forward_list<Posting>::iterator it,
+               forward_list<Posting>::iterator end_it, int docid);
 } // namespace Search

@@ -31,3 +31,14 @@ void Search::MakeUnique(vector<int> &num) {
   }
   num.erase(end_unique, end(num));
 }
+
+int Search::CountDocId(forward_list<Posting>::iterator it,
+                       forward_list<Posting>::iterator end_it, int docid) {
+  int count = 0;
+  while (it != end_it) {
+    if (it->DocId() == docid)
+      count++;
+    it++;
+  }
+  return count;
+}
