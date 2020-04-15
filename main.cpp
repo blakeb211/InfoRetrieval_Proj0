@@ -40,6 +40,10 @@ int main() {
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   mb.SortMap();
 
+  string s = "Mention";
+  Utility::ToLower(s);
+  cout << "String s: " << s << endl;
+
   // Show a user interface to search the map
 
   while (1) {
@@ -47,14 +51,12 @@ int main() {
     // Break user input up into a vector of strings called search_words
     vector<string> search_words = Search::GetSearchTerms();
 
-    // Crawlers have two two iterators and there is one crawler per search term.
-    // 		+	One is a "moving_iterator" that will move forward as the
-    // search
-    //			algorithm progresses. - called Mover
-    // 		+	The other is an end iterator to tell when the
-    // "moving_iterator" gets to the 			end. - called End_Marker
+    //TODO: Add support for capitalized words
+   //  Convert search terms to lowercase
+    for (int i = 0; i < search_words[i].size(); i++)
+      Utility::ToLower(search_words[i]);
 
-    /* START INITIALIZE CRAWLERS */
+    /* Check if all search terms are in inverted_index */
     bool SOME_TERMS_NOT_IN_MAP = false;
     for (int i = 0; i < search_words.size(); i++) {
       if (mb.GetFrequency(search_words[i]) == 0) {
@@ -62,14 +64,14 @@ int main() {
         break;
       }
     }
-
     if (SOME_TERMS_NOT_IN_MAP) {
       cout << "One or more search terms not found in any files." << endl;
       continue;
     }
-    /* END INITIALIZE CRAWLERS */
 
-    // print docids for terms
+
+    // Debugging output: Print the forward_List of doc_ids
+    // for each search word.
     for (int word_id = 0; word_id < search_words.size(); word_id++) {
       auto map_it = mb.GetIterator(search_words[word_id]);
       cout << "Word: " << search_words[word_id] << " ";
@@ -92,6 +94,7 @@ int main() {
         it++;
       }
     }
+
     // Make the master list unique
     Search::MakeUnique(master_doc_list);
 
