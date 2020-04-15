@@ -35,5 +35,8 @@ namespace Search {
 	// Move crawlers forward if their docid matches the given docid.
 	void MoveCrawlersForward(vector<Crawler>&, int);
 	
-	bool AreAllDocIdsTheSame(const vector<crawler>&);
+	bool AllDocIdsTheSame(const vector<Crawler>&);
+	
+	void MakeUnique(vector<int>&);
+
 } // end of namespace
