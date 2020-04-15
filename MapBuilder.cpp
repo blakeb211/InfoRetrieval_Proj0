@@ -41,6 +41,7 @@ void MapBuilder::PrintMap(ostream &os) {
 }
 // Count total number of postings for the term in the map
 int MapBuilder::GetFrequency(string term) {
+  Utility::ToLower(term);
   int count = 0;
   auto search_result = inverted_index.find(term);
   if (search_result == inverted_index.end()) {

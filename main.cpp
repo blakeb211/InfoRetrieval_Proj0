@@ -40,21 +40,12 @@ int main() {
   mb.ProcessInputFiles(); // this function calls AddPostingToMap()
   mb.SortMap();
 
-  string s = "Mention";
-  Utility::ToLower(s);
-  cout << "String s: " << s << endl;
-
   // Show a user interface to search the map
 
   while (1) {
 
     // Break user input up into a vector of strings called search_words
     vector<string> search_words = Search::GetSearchTerms();
-
-    //TODO: Add support for capitalized words
-   //  Convert search terms to lowercase
-    for (int i = 0; i < search_words[i].size(); i++)
-      Utility::ToLower(search_words[i]);
 
     /* Check if all search terms are in inverted_index */
     bool SOME_TERMS_NOT_IN_MAP = false;

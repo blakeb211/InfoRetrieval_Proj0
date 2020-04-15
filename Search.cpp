@@ -13,7 +13,7 @@ vector<string> Search::GetSearchTerms() {
   getline(cin, user_input);
   if (user_input == "q")
     exit(EXIT_SUCCESS);
-
+  boost::to_lower(user_input);
   // split the string on whitespace and return
   vector<string> result{};
   boost::split(result, user_input, boost::is_any_of(" "));

@@ -2,17 +2,15 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#include <cctype>
+#include "boost/algorithm/string.hpp"
 using namespace Utility;
 using namespace std;
 // Convert a string to a lowercase version by modifying it.
-void Utility::ToLower(std::string &s) {
+void Utility::ToLower(std::string &str) {
   // May be faster to merge terms than to do this for every token
-  string tmp = s;
-  for (int i = 0; i < s.size(); i++)
-    std::tolower(tmp[i]);
-
-  s = tmp;
+  string tmp = str;
+  boost::algorithm::to_lower(tmp);
+  str = tmp;
 }
 
 // Check if a string is a sequence of integers
