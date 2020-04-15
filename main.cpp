@@ -111,9 +111,10 @@ int main() {
         doc_ids_with_all_terms.push_back(doc);
     }
 
+    cout << "Indexed files with those terms: " << endl;
     for (auto i : doc_ids_with_all_terms)
       cout << kInputFilenames[i] << endl;
-
+    cout << endl;
   } // end of outer while loop
   return 0;
 }
